@@ -439,11 +439,22 @@ const seedData = async () => {
     console.log('  Manager:  manager@staffsync.com   / password123');
     console.log('  Employee: alex.rivera@staffsync.com / password123');
     console.log('------------------------------------------------------------');
-    process.exit(0);
+
+    if (require.main === module) {
+      process.exit(0);
+    }
+    return { success: true };
   } catch (error) {
     console.error('[Seeder Error]:', error);
-    process.exit(1);
+    if (require.main === module) {
+      process.exit(1);
+    }
+    throw error;
   }
 };
 
-seedData();
+if (require.main === module) {
+  seedData();
+}
+
+module.exports = seedData;

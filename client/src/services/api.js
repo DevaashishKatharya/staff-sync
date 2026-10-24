@@ -1,5 +1,11 @@
 // StaffSync API Service Layer
-const BASE_URL = '/api';
+const getBaseUrl = () => {
+  const envUrl = import.meta.env.VITE_API_URL;
+  if (!envUrl) return '/api';
+  return envUrl.endsWith('/api') ? envUrl : `${envUrl.replace(/\/$/, '')}/api`;
+};
+
+const BASE_URL = getBaseUrl();
 
 const getAuthHeaders = () => {
   const token = localStorage.getItem('staffsync_token');
@@ -232,6 +238,21 @@ export const api = {
     getEmployeeMetrics: async () => {
       const res = await fetch(`${BASE_URL}/reports/employee-metrics`, {
         headers: getAuthHeaders(),
+      });
+      return handleResponse(res);
+    },
+  },
+
+  // System API
+  system: {
+    getHealth: async () => {
+      const res = await fetch(`${BASE_URL}/health`);
+      return handleResponse(res);
+    },
+    seed: async (force = false) => {
+      const res = await fetch(`${BASE_URL}/seed?force=${force}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
       });
       return handleResponse(res);
     },

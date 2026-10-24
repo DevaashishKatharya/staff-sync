@@ -108,11 +108,23 @@ const quickLogin = async (req, res, next) => {
       query = { role: 'employee' };
     }
 
-    const user = await User.findOne(query).populate('employeeRef');
+    let user = await User.findOne(query).populate('employeeRef');
+
+    // If no user found and database is completely empty, auto-seed demo records on demand
+    if (!user) {
+      const userCount = await User.countDocuments();
+      if (userCount === 0) {
+        console.log('[Auth] Database is empty. Auto-seeding initial demo data...');
+        const seedData = require('../seeds/seedData');
+        await seedData();
+        user = await User.findOne(query).populate('employeeRef');
+      }
+    }
+
     if (!user) {
       return res.status(404).json({
         success: false,
-        message: `Demo user with role '${role}' not found. Please ensure database seed data is loaded.`,
+        message: `Demo user with role '${role}' not found. Please ensure database seed data is loaded via /api/seed.`,
       });
     }
 

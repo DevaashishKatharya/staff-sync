@@ -48,6 +48,51 @@ npm run seed
 
 ---
 
+## ⚡ Deploying to Vercel (Live in 3 Minutes)
+
+StaffSync is configured for zero-configuration, 1-click deployment on **Vercel** with a unified monorepo structure (React Vite frontend + Express Serverless API on the same domain).
+
+### Prerequisites
+1. A free **[MongoDB Atlas](https://www.mongodb.com/cloud/atlas)** cluster.
+   - In MongoDB Atlas, go to **Network Access** > **Add IP Address** > choose **Allow Access from Anywhere (`0.0.0.0/0`)** (required for Vercel serverless functions).
+   - Go to **Database Access** > create a database user and password.
+   - Click **Connect** > **Drivers** > copy your connection string (e.g., `mongodb+srv://user:pass@cluster0.mongodb.net/staffsync?retryWrites=true&w=majority`).
+2. A free **[Vercel](https://vercel.com)** account.
+
+### Step-by-Step Vercel Deployment
+
+1. **Push your code to GitHub / GitLab / Bitbucket**:
+   ```bash
+   git add .
+   git commit -m "Configure Vercel deployment and serverless API"
+   git push origin main
+   ```
+
+2. **Import Project into Vercel**:
+   - Log in to your Vercel Dashboard and click **"Add New..."** > **"Project"**.
+   - Select your `staffsync` repository and click **Import**.
+   - **Framework Preset**: Vite (detected automatically).
+   - **Root Directory**: `./` (leave default).
+
+3. **Configure Environment Variables in Vercel**:
+   Under **Environment Variables**, add:
+   | Variable | Value | Required | Description |
+   | :--- | :--- | :--- | :--- |
+   | `MONGODB_URI` | `mongodb+srv://...` | **Yes** | Your MongoDB Atlas connection URI |
+   | `JWT_SECRET` | *random string* | **Yes** | 32+ character random secret for JWT signing |
+   | `NODE_ENV` | `production` | Optional | Set to `production` |
+
+4. **Click "Deploy"**:
+   - Vercel installs dependencies, builds the Vite React client, and packages the Express API as a serverless function.
+   - Once deployment completes, your site will be live at `https://your-staffsync-app.vercel.app`!
+
+5. **Populate Demo Data**:
+   - **Method A (Automatic)**: Simply click any **"Quick Switch"** demo role (HR Director, Engineering Manager, etc.) on the login page; the system automatically detects an empty database and seeds it on the fly!
+   - **Method B (Browser/API)**: Visit `https://your-staffsync-app.vercel.app/api/seed` in your browser or make a `POST /api/seed` request.
+   - **Method C (Health Check)**: Check status at `https://your-staffsync-app.vercel.app/api/health`.
+
+---
+
 ## 🔑 Demo Login Credentials
 
 The system provides **1-Click Quick Role Switchers** directly in the top navigation bar and on the login page:
