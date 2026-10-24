@@ -8,7 +8,12 @@ if (!cached) {
 }
 
 const connectDB = async () => {
-  const mongoUri = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/staffsync';
+  const isProd = process.env.NODE_ENV === 'production' || process.env.VERCEL;
+  const mongoUri = process.env.MONGODB_URI || (!isProd ? 'mongodb://127.0.0.1:27017/staffsync' : null);
+
+  if (!mongoUri) {
+    throw new Error('MONGODB_URI environment variable is missing in Vercel settings. Please add MONGODB_URI under Project Settings > Environment Variables.');
+  }
 
   // Return existing active connection
   if (cached.conn && mongoose.connection.readyState === 1) {

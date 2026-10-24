@@ -64,8 +64,8 @@ app.use(async (req, res, next) => {
     console.error('[DB Connection Middleware Error]:', error.message);
     return res.status(500).json({
       success: false,
-      message: 'Database connection failed. Please ensure MONGODB_URI is properly configured in Vercel environment variables.',
-      error: process.env.NODE_ENV === 'production' ? undefined : error.message,
+      message: 'Database connection failed. Please ensure MONGODB_URI is properly configured in Vercel environment variables and Atlas IP access is enabled.',
+      details: error.message,
     });
   }
 });
