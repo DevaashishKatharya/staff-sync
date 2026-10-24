@@ -83,7 +83,16 @@ apiRouter.use('/reports', reportRoutes);
 apiRouter.use('/seed', seedRoutes);
 
 // Health check endpoint
-apiRouter.get('/health', (req, res) => {
+apiRouter.get('/health', async (req, res) => {
+  let dbError = null;
+  if (mongoose.connection.readyState !== 1) {
+    try {
+      await connectDB();
+    } catch (err) {
+      dbError = err.message;
+    }
+  }
+
   const dbState = mongoose.connection.readyState;
   const dbStatusMap = {
     0: 'disconnected',
@@ -99,6 +108,7 @@ apiRouter.get('/health', (req, res) => {
     database: {
       status: dbStatusMap[dbState] || 'unknown',
       connected: dbState === 1,
+      error: dbError,
     },
     timestamp: new Date().toISOString(),
   });
